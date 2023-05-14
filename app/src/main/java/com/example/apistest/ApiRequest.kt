@@ -4,11 +4,14 @@ import com.google.gson.annotations.SerializedName
 
 data class ApiRequest(
     @SerializedName("model")
-    val model: String,
+    val model: String = "gpt-3.5-turbo",
 
-    @SerializedName("prompt")
-    val textRequested: String,
+    @SerializedName("messages")
+    val messages: List<Message>
+)
 
-    @SerializedName("max_tokens")
-    val maxTokens: Int
+data class Message(
+    val role: String,
+    @SerializedName("content")
+    val text: String
 )

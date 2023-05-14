@@ -1,24 +1,22 @@
 package com.example.apistest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import okhttp3.OkHttpClient
+import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.POST
 
 class MainActivity : AppCompatActivity() {
     private lateinit var textInput: EditText
     private lateinit var btnGetText: Button
     private lateinit var txtTextGenerated: TextView
-    private val clientOkHttpClient = OkHttpClient().newBuilder()
+    /*private val clientOkHttpClient = OkHttpClient().newBuilder()
         .addInterceptor { chain ->
             val request =
                 chain.request().newBuilder()
@@ -27,11 +25,11 @@ class MainActivity : AppCompatActivity() {
                     .build()
             chain.proceed(request)
         }
-        .build()
+        .build()*/
 
     private val serviceGetTextFromPrompt: ApiInterface = Retrofit.Builder()
-        .baseUrl("https://api.openai.com/v1/")
-        .client(clientOkHttpClient)
+        .baseUrl("https://api.openai.com/v1/chat/")
+        //.client(clientOkHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ApiInterface::class.java)
@@ -51,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                     if(response.isSuccessful &&
                         response.body() != null){
-                        txtTextGenerated.text = response.body()!!.choiceList[0].text
+                        txtTextGenerated.text = response.body()!!.choiceList[0].message.text
                     }
                 }
 
@@ -64,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun getText(inputText: String): Call<ApiResponse> {
-        val apiRequest = ApiRequest(model= "text-davinci-003", textRequested = inputText, maxTokens = 4000)
+        val apiRequest = ApiRequest(messages = listOf(Message(role = "user", text= inputText)))
         return serviceGetTextFromPrompt.createText(apiRequest)
     }
 }

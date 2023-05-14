@@ -14,11 +14,11 @@ data class ApiResponse(
 )
 
 data class Choice(
-    @SerializedName("name")
-    val text: String,
-
     @SerializedName("index")
-    val index: Int
+    val index: Int,
+
+    @SerializedName("message")
+    val message: Message
 )
 
 data class Usage(
