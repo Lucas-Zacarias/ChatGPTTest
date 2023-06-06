@@ -3,9 +3,6 @@ package com.example.apistest
 import com.google.gson.annotations.SerializedName
 
 data class ApiResponse(
-    @SerializedName("model")
-    val model: String,
-
     @SerializedName("choices")
     val choiceList: List<Choice>,
 
@@ -14,11 +11,8 @@ data class ApiResponse(
 )
 
 data class Choice(
-    @SerializedName("index")
-    val index: Int,
-
-    @SerializedName("message")
-    val message: Message
+    @SerializedName("text")
+    val text: String
 )
 
 data class Usage(
