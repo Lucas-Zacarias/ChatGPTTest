@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     if(response.isSuccessful && response.body() != null){
                         Log.i("Prueba", response.body()!!.text)
+                        txtTextGenerated.text = response.body()!!.text
                     }
                 }
 
@@ -114,7 +115,9 @@ class MainActivity : AppCompatActivity() {
     private fun getTextFromAudio(audioFile: File): Call<TranscribeResponse>{
         val requestBody = RequestBody.create(MediaType.parse("audio/mp3"), audioFile)
         val filePart = MultipartBody.Part.createFormData("file", audioFile.name, requestBody)
-        return serviceGetTextFromAudio.transcribe(file=filePart, model="whisper-1", language = "es")
+        val model = RequestBody.create(MediaType.parse("multipart/form-data"), "whisper-1")
+
+        return serviceGetTextFromAudio.transcribe(file=filePart, model=model)
 
     }
 

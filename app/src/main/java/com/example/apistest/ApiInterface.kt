@@ -1,6 +1,7 @@
 package com.example.apistest
 
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,14 +21,12 @@ interface ApiInterface {
     fun createText(@Body apiRequest: ApiRequest): Call<ApiResponse>
 
     @Headers(
-        "Content-Type: multipart/form-data",
         "Authorization: Bearer $API_KEY"
     )
     @Multipart
     @POST("transcriptions")
     fun transcribe(
         @Part file: MultipartBody.Part,
-        @Part("model") model: String,
-        @Part("language") language: String
+        @Part("model") model: RequestBody
     ): Call<TranscribeResponse>
 }
