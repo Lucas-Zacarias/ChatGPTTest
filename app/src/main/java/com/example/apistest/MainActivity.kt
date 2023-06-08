@@ -1,5 +1,6 @@
 package com.example.apistest
 
+import android.content.Context
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
@@ -9,9 +10,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -83,7 +87,8 @@ class MainActivity : AppCompatActivity() {
 
             })*/
 
-            val audioFile = getAudioFileFromRaw(R.raw.record_test, "test.m4a")
+           // val audioFile = getAudioFileFromRaw(R.raw.record_test, "test.m4a")
+            val audioFile = obtainAudioFile(this, "test.m4a")
 
             val responseAudio =
                 getTextFromAudio(audioFile)
@@ -107,15 +112,22 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    private fun obtainAudioFile(context: Context, audioFileName: String): File {
+        val filePath = File(this.filesDir, audioFileName)
+
+        return filePath
+    }
+
     private fun getText(inputText: String): Call<ApiResponse> {
         val apiRequest = ApiRequest(prompt = inputText)
         return serviceGetTextFromPrompt.createText(apiRequest)
     }
 
     private fun getTextFromAudio(audioFile: File): Call<TranscribeResponse>{
-        val requestBody = RequestBody.create(MediaType.parse("audio/mp3"), audioFile)
+        val requestBody = audioFile.asRequestBody("audio/mp3".toMediaTypeOrNull())
         val filePart = MultipartBody.Part.createFormData("file", audioFile.name, requestBody)
-        val model = RequestBody.create(MediaType.parse("multipart/form-data"), "whisper-1")
+        val model = "whisper-1".toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         return serviceGetTextFromAudio.transcribe(file=filePart, model=model)
 
